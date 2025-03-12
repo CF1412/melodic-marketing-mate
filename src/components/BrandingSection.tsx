@@ -1,10 +1,17 @@
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AnimatedCard } from "./AnimatedCard";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { Download, Share2, RefreshCw, Image } from "lucide-react";
 import { type ArtistData } from "./ArtistForm";
 import { AnimatedText } from "./AnimatedText";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Image, Download, Share2, RefreshCw, Info, Palette } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 interface BrandingSectionProps {
   artistData: ArtistData | null;
@@ -13,11 +20,12 @@ interface BrandingSectionProps {
 export function BrandingSection({ artistData }: BrandingSectionProps) {
   const [loading, setLoading] = useState(true);
   const [logoGenerated, setLogoGenerated] = useState(false);
+  const [colorScheme, setColorScheme] = useState("modern");
+  const [designStyle, setDesignStyle] = useState("minimal");
   const [brandIdentity, setBrandIdentity] = useState<string[]>([]);
 
   useEffect(() => {
     if (artistData) {
-      // Simulate API loading
       setLoading(true);
       const timer = setTimeout(() => {
         setLoading(false);
@@ -37,22 +45,66 @@ export function BrandingSection({ artistData }: BrandingSectionProps) {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <h2 className="text-2xl font-bold mb-4">
-        <AnimatedText text="AI-Generated Branding" gradient tag="span" />
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">
+          <AnimatedText text="AI-Generated Branding" gradient tag="span" />
+        </h2>
+        
+        <div className="flex gap-4">
+          <Select value={colorScheme} onValueChange={setColorScheme}>
+            <SelectTrigger className="w-[140px]">
+              <Palette className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Color Scheme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="modern">Modern & Clean</SelectItem>
+              <SelectItem value="vibrant">Vibrant & Bold</SelectItem>
+              <SelectItem value="minimal">Minimal</SelectItem>
+              <SelectItem value="retro">Retro</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={designStyle} onValueChange={setDesignStyle}>
+            <SelectTrigger className="w-[140px]">
+              <Image className="w-4 h-4 mr-2" />
+              <SelectValue placeholder="Design Style" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="minimal">Minimal</SelectItem>
+              <SelectItem value="artistic">Artistic</SelectItem>
+              <SelectItem value="geometric">Geometric</SelectItem>
+              <SelectItem value="abstract">Abstract</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Logo Section */}
         <AnimatedCard delay={200}>
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Logo & Visual Identity</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold">Logo & Visual Identity</h3>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="w-4 h-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>AI-generated logo based on your genre and style preferences</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
             
             {loading ? (
               <div className="h-64 flex items-center justify-center bg-muted/30 rounded-xl">
                 <LoadingSpinner size="lg" />
               </div>
             ) : (
-              <div className="relative overflow-hidden rounded-xl aspect-square bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
+              <div className={`relative overflow-hidden rounded-xl aspect-square bg-gradient-to-br transition-all duration-500 ${
+                colorScheme === 'vibrant' ? 'from-primary/20 to-accent/20' :
+                colorScheme === 'modern' ? 'from-primary/10 to-accent/10' :
+                colorScheme === 'retro' ? 'from-orange-400/20 to-purple-400/20' :
+                'from-gray-100/20 to-gray-300/20'
+              }`}>
                 <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary to-transparent animate-pulse-subtle"></div>
                 <div className="relative z-10 text-center p-8">
                   <div className="mx-auto w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg mb-4">
@@ -98,7 +150,6 @@ export function BrandingSection({ artistData }: BrandingSectionProps) {
           </div>
         </AnimatedCard>
         
-        {/* Brand Identity Section */}
         <AnimatedCard delay={400}>
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">Brand Identity Guidelines</h3>
@@ -148,48 +199,65 @@ export function BrandingSection({ artistData }: BrandingSectionProps) {
           </div>
         </AnimatedCard>
         
-        {/* Social Media Content Preview */}
         <AnimatedCard className="md:col-span-2" delay={600}>
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Social Media Content</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold">Social Media Content</h3>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="w-4 h-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Preview how your brand looks across different platforms</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
             
             {loading ? (
               <div className="h-44 flex items-center justify-center bg-muted/30 rounded-xl">
                 <LoadingSpinner />
               </div>
             ) : (
-              <div className="grid grid-cols-3 gap-4">
-                {[1, 2, 3].map((item) => (
-                  <div key={item} className="aspect-square rounded-xl overflow-hidden relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                      <Image className="w-8 h-8 text-muted-foreground" />
+              <div className="relative">
+                <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
+                  {[1, 2, 3, 4].map((item) => (
+                    <div 
+                      key={item}
+                      className="min-w-[300px] aspect-square rounded-xl overflow-hidden snap-center relative group"
+                    >
+                      <div className={`absolute inset-0 bg-gradient-to-br transition-all duration-500 flex items-center justify-center ${
+                        colorScheme === 'vibrant' ? 'from-primary/20 to-accent/20' :
+                        colorScheme === 'modern' ? 'from-primary/10 to-accent/10' :
+                        colorScheme === 'retro' ? 'from-orange-400/20 to-purple-400/20' :
+                        'from-gray-100/20 to-gray-300/20'
+                      }`}>
+                        <Image className="w-8 h-8 text-muted-foreground" />
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 p-4 glass-morphism opacity-0 group-hover:opacity-100 transition-opacity">
+                        <h4 className="text-sm font-medium truncate">
+                          {item === 1 ? `New release by ${artistData.name}` :
+                           item === 2 ? `Behind the scenes` :
+                           item === 3 ? `Live performance` :
+                           `Fan spotlight`}
+                        </h4>
+                      </div>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-3 glass-morphism opacity-0 group-hover:opacity-100 transition-opacity">
-                      <h4 className="text-xs font-medium truncate">
-                        {item === 1 
-                          ? `New release by ${artistData.name}` 
-                          : item === 2 
-                            ? `Behind the scenes - ${artistData.name}`
-                            : `${artistData.name} live experience`}
-                      </h4>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                
+                <div className="absolute top-1/2 -translate-y-1/2 -left-4">
+                  <button className="p-2 rounded-full bg-background/80 backdrop-blur shadow-lg">
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
+                
+                <div className="absolute top-1/2 -translate-y-1/2 -right-4">
+                  <button className="p-2 rounded-full bg-background/80 backdrop-blur shadow-lg">
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             )}
-            
-            <div className="flex justify-between items-center">
-              <div className="text-sm text-muted-foreground">
-                {!loading ? "AI-generated content templates" : "Designing social posts..."}
-              </div>
-              
-              <button 
-                className="px-4 py-2 text-sm rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
-                disabled={loading}
-              >
-                Generate More Content
-              </button>
-            </div>
           </div>
         </AnimatedCard>
       </div>
