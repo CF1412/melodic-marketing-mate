@@ -1,0 +1,167 @@
+
+import { useState, useEffect } from "react";
+import { AnimatedCard } from "./AnimatedCard";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { Copy, Download, RefreshCw } from "lucide-react";
+import { type ArtistData } from "./ArtistForm";
+import { useToast } from "@/hooks/use-toast";
+import { AnimatedText } from "./AnimatedText";
+
+interface PressSectionProps {
+  artistData: ArtistData | null;
+}
+
+export function PressSection({ artistData }: PressSectionProps) {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [pressRelease, setPressRelease] = useState("");
+  const [artistBio, setArtistBio] = useState("");
+
+  useEffect(() => {
+    if (artistData) {
+      // Simulate API loading
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setLoading(false);
+        generateContent();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [artistData]);
+
+  const generateContent = () => {
+    if (!artistData) return;
+    
+    // Generate press release
+    setPressRelease(`FOR IMMEDIATE RELEASE\n\n${artistData.name} Announces New ${artistData.genre} Project\n\nBringing fresh energy to the ${artistData.genre} scene, ${artistData.name} is excited to announce their upcoming release that promises to captivate ${artistData.targetAudience} with its innovative sound and authentic expression.\n\nBuilding on ${artistData.socialPresence ? `their existing presence of ${artistData.socialPresence}` : "their growing reputation"}, this release marks a significant evolution in their artistic journey.\n\nStay tuned for more updates as ${artistData.name} continues to push boundaries in the music industry.`);
+    
+    // Generate artist bio
+    setArtistBio(`${artistData.name} is an emerging force in the ${artistData.genre} landscape, creating music that resonates deeply with ${artistData.targetAudience}.\n\nWith a distinctive sound that blends traditional elements of ${artistData.genre} with innovative production techniques, ${artistData.name} has cultivated a unique voice in today's music scene.\n\n${artistData.socialPresence ? `Already building momentum with ${artistData.socialPresence}, t` : "T"}heir artistic vision aims to create authentic connections through sound, creating an immersive experience for listeners that transcends conventional genre boundaries.`);
+  };
+
+  const handleCopy = (text: string, type: "press release" | "artist bio") => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied to clipboard",
+      description: `The ${type} has been copied to your clipboard`
+    });
+  };
+
+  const handleRegenerate = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      generateContent();
+    }, 1500);
+  };
+
+  if (!artistData) return null;
+
+  return (
+    <div className="space-y-8 animate-fade-in">
+      <h2 className="text-2xl font-bold mb-4">
+        <AnimatedText text="AI-Powered Press & PR" gradient tag="span" />
+      </h2>
+      
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Press Release */}
+        <AnimatedCard delay={200}>
+          <div className="space-y-4 h-full flex flex-col">
+            <h3 className="text-xl font-semibold">Press Release</h3>
+            
+            {loading ? (
+              <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-xl">
+                <LoadingSpinner />
+              </div>
+            ) : (
+              <div className="flex-1 overflow-y-auto p-4 bg-muted/20 rounded-xl border border-border">
+                <pre className="text-sm whitespace-pre-wrap font-sans">{pressRelease}</pre>
+              </div>
+            )}
+            
+            <div className="flex justify-between items-center mt-auto">
+              <div className="text-sm text-muted-foreground">
+                {!loading ? "Customized press release template" : "Generating press release..."}
+              </div>
+              
+              <div className="flex gap-2">
+                <button 
+                  className="p-2 rounded-full hover:bg-secondary transition-colors" 
+                  aria-label="Regenerate"
+                  disabled={loading}
+                  onClick={handleRegenerate}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+                <button 
+                  className="p-2 rounded-full hover:bg-secondary transition-colors" 
+                  aria-label="Copy"
+                  disabled={loading}
+                  onClick={() => handleCopy(pressRelease, "press release")}
+                >
+                  <Copy className="w-4 h-4" />
+                </button>
+                <button 
+                  className="p-2 rounded-full hover:bg-secondary transition-colors" 
+                  aria-label="Download"
+                  disabled={loading}
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </AnimatedCard>
+        
+        {/* Artist Bio */}
+        <AnimatedCard delay={400}>
+          <div className="space-y-4 h-full flex flex-col">
+            <h3 className="text-xl font-semibold">Artist Biography</h3>
+            
+            {loading ? (
+              <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-xl">
+                <LoadingSpinner />
+              </div>
+            ) : (
+              <div className="flex-1 overflow-y-auto p-4 bg-muted/20 rounded-xl border border-border">
+                <pre className="text-sm whitespace-pre-wrap font-sans">{artistBio}</pre>
+              </div>
+            )}
+            
+            <div className="flex justify-between items-center mt-auto">
+              <div className="text-sm text-muted-foreground">
+                {!loading ? "Audience-focused artist biography" : "Analyzing artist profile..."}
+              </div>
+              
+              <div className="flex gap-2">
+                <button 
+                  className="p-2 rounded-full hover:bg-secondary transition-colors" 
+                  aria-label="Regenerate"
+                  disabled={loading}
+                  onClick={handleRegenerate}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+                <button 
+                  className="p-2 rounded-full hover:bg-secondary transition-colors" 
+                  aria-label="Copy"
+                  disabled={loading}
+                  onClick={() => handleCopy(artistBio, "artist bio")}
+                >
+                  <Copy className="w-4 h-4" />
+                </button>
+                <button 
+                  className="p-2 rounded-full hover:bg-secondary transition-colors" 
+                  aria-label="Download"
+                  disabled={loading}
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </AnimatedCard>
+      </div>
+    </div>
+  );
+}
