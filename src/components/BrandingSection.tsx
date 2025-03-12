@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatedCard } from "./AnimatedCard";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { type ArtistData } from "./ArtistForm";
