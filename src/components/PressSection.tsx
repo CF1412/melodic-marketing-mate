@@ -6,30 +6,41 @@ import { Copy, Download, RefreshCw } from "lucide-react";
 import { type ArtistData } from "./ArtistForm";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatedText } from "./AnimatedText";
+import { type OpenAIResponse } from "@/utils/openaiService";
 
 interface PressSectionProps {
   artistData: ArtistData | null;
+  generatedContent: OpenAIResponse | null;
+  isGenerating: boolean;
 }
 
-export function PressSection({ artistData }: PressSectionProps) {
+export function PressSection({ artistData, generatedContent, isGenerating }: PressSectionProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [pressRelease, setPressRelease] = useState("");
   const [artistBio, setArtistBio] = useState("");
 
   useEffect(() => {
-    if (artistData) {
+    // Set loading state based on isGenerating
+    setLoading(isGenerating);
+    
+    // If we have generated content and not generating anymore, update the state
+    if (generatedContent && !isGenerating) {
+      setPressRelease(generatedContent.press.pressRelease);
+      setArtistBio(generatedContent.press.artistBio);
+    } 
+    // If we don't have generated content yet, use fallback after a timeout
+    else if (artistData && !generatedContent && !isGenerating) {
       // Simulate API loading
-      setLoading(true);
       const timer = setTimeout(() => {
         setLoading(false);
-        generateContent();
+        generateFallbackContent();
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [artistData]);
+  }, [artistData, generatedContent, isGenerating]);
 
-  const generateContent = () => {
+  const generateFallbackContent = () => {
     if (!artistData) return;
     
     // Generate press release
@@ -51,7 +62,7 @@ export function PressSection({ artistData }: PressSectionProps) {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      generateContent();
+      generateFallbackContent();
     }, 1500);
   };
 

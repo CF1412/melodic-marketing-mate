@@ -7,18 +7,44 @@ import { PressSection } from "@/components/PressSection";
 import { InsightsSection } from "@/components/InsightsSection";
 import { EngagementSection } from "@/components/EngagementSection";
 import { ChevronDown } from "lucide-react";
+import { generateMarketingContent, type OpenAIResponse } from "@/utils/openaiService";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const { toast } = useToast();
   const [artistData, setArtistData] = useState<ArtistData | null>(null);
+  const [generatedContent, setGeneratedContent] = useState<OpenAIResponse | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const brandingSectionRef = useRef<HTMLDivElement>(null);
   
-  const handleSubmit = (data: ArtistData) => {
+  const handleSubmit = async (data: ArtistData) => {
     setArtistData(data);
+    setIsGenerating(true);
     
-    // Scroll to the branding section
-    setTimeout(() => {
-      brandingSectionRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    try {
+      // Generate content using OpenAI
+      const content = await generateMarketingContent(data);
+      setGeneratedContent(content);
+      
+      toast({
+        title: "Content generated successfully",
+        description: "Your AI marketing content is ready!"
+      });
+    } catch (error) {
+      toast({
+        title: "Error generating content",
+        description: "There was an issue connecting to the AI service. Using fallback content.",
+        variant: "destructive"
+      });
+      console.error("Content generation error:", error);
+    } finally {
+      setIsGenerating(false);
+      
+      // Scroll to the branding section
+      setTimeout(() => {
+        brandingSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
   };
 
   return (
@@ -62,17 +88,29 @@ const Index = () => {
         <div className="py-16 px-4 md:px-8 space-y-24 max-w-6xl mx-auto">
           {/* Branding Section */}
           <section ref={brandingSectionRef}>
-            <BrandingSection artistData={artistData} />
+            <BrandingSection 
+              artistData={artistData}
+              generatedContent={generatedContent}
+              isGenerating={isGenerating}
+            />
           </section>
           
           {/* Press Section */}
           <section>
-            <PressSection artistData={artistData} />
+            <PressSection 
+              artistData={artistData}
+              generatedContent={generatedContent}
+              isGenerating={isGenerating}
+            />
           </section>
           
           {/* Insights Section */}
           <section>
-            <InsightsSection artistData={artistData} />
+            <InsightsSection 
+              artistData={artistData}
+              generatedContent={generatedContent}
+              isGenerating={isGenerating}
+            />
           </section>
           
           {/* Engagement Section */}

@@ -10,9 +10,10 @@ interface LogoPreviewProps {
   loading: boolean;
   logoGenerated: boolean;
   colorScheme: string;
+  logoDescription?: string;
 }
 
-export function LogoPreview({ artistData, loading, logoGenerated, colorScheme }: LogoPreviewProps) {
+export function LogoPreview({ artistData, loading, logoGenerated, colorScheme, logoDescription }: LogoPreviewProps) {
   const [profileImage, setProfileImage] = useState("/lovable-uploads/a95261aa-0b6f-4962-bcc3-baee68944ad3.png");
   
   const cycleProfileImage = () => {
@@ -89,7 +90,7 @@ export function LogoPreview({ artistData, loading, logoGenerated, colorScheme }:
       
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          {logoGenerated ? "Logo generated based on your profile" : "Generating logo..."}
+          {logoGenerated ? logoDescription || "Logo generated based on your profile" : "Generating logo..."}
         </div>
         
         <div className="flex gap-2">

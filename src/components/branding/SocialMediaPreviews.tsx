@@ -5,13 +5,20 @@ import { RefreshCw, Info, ChevronLeft, ChevronRight, Instagram, Music, Mic } fro
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useState } from "react";
 
+interface SocialMediaPost {
+  type: string;
+  caption: string;
+  platform: string;
+}
+
 interface SocialMediaPreviewsProps {
   artistData: ArtistData;
   loading: boolean;
   colorScheme: string;
+  socialPosts?: SocialMediaPost[];
 }
 
-export function SocialMediaPreviews({ artistData, loading, colorScheme }: SocialMediaPreviewsProps) {
+export function SocialMediaPreviews({ artistData, loading, colorScheme, socialPosts }: SocialMediaPreviewsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   
   const socialImages = [
@@ -23,21 +30,42 @@ export function SocialMediaPreviews({ artistData, loading, colorScheme }: Social
     "/lovable-uploads/c42d2bcd-adae-49de-bfb9-96d1208d6621.png", // Person recording podcast
   ];
   
-  const socialCaptions = [
-    `New single dropping this Friday! #${artistData.genre.replace(/\s+/g, '')}`,
-    `Spinning some vinyl inspiration for the upcoming album #${artistData.name.replace(/\s+/g, '')}`,
-    `Playlist curated for my amazing fans! Link in bio #Music${artistData.genre.replace(/\s+/g, '')}`,
-    `Last night's show was incredible! Thanks ${artistData.targetAudience || 'everyone'} for coming out!`,
-    `Behind the decks working on new tracks #StudioLife`,
-    `Recording session for the new podcast episode #BehindTheMusic`
-  ];
+  // Use generated captions if available, otherwise fallback
+  const socialCaptions = socialPosts 
+    ? socialPosts.map(post => post.caption).concat([
+        `Last night's show was incredible! Thanks ${artistData.targetAudience || 'everyone'} for coming out!`,
+        `Behind the decks working on new tracks #StudioLife`,
+        `Recording session for the new podcast episode #BehindTheMusic`
+      ])
+    : [
+        `New single dropping this Friday! #${artistData.genre.replace(/\s+/g, '')}`,
+        `Spinning some vinyl inspiration for the upcoming album #${artistData.name.replace(/\s+/g, '')}`,
+        `Playlist curated for my amazing fans! Link in bio #Music${artistData.genre.replace(/\s+/g, '')}`,
+        `Last night's show was incredible! Thanks ${artistData.targetAudience || 'everyone'} for coming out!`,
+        `Behind the decks working on new tracks #StudioLife`,
+        `Recording session for the new podcast episode #BehindTheMusic`
+      ];
   
-  const socialPlatforms = [
-    { name: "Instagram", icon: <Instagram className="w-4 h-4" /> },
-    { name: "TikTok", icon: <Music className="w-4 h-4" /> },
-    { name: "Spotify", icon: <Music className="w-4 h-4" /> },
-    { name: "YouTube", icon: <Mic className="w-4 h-4" /> }
-  ];
+  // Use platform data from generated content if available
+  const socialPlatforms = socialPosts 
+    ? socialPosts.map(post => ({
+        name: post.platform,
+        icon: post.platform.toLowerCase().includes('instagram')
+          ? <Instagram className="w-4 h-4" />
+          : post.platform.toLowerCase().includes('tiktok')
+          ? <Music className="w-4 h-4" />
+          : <Mic className="w-4 h-4" />
+      })).concat([
+        { name: "YouTube", icon: <Mic className="w-4 h-4" /> },
+        { name: "Spotify", icon: <Music className="w-4 h-4" /> },
+        { name: "SoundCloud", icon: <Music className="w-4 h-4" /> }
+      ])
+    : [
+        { name: "Instagram", icon: <Instagram className="w-4 h-4" /> },
+        { name: "TikTok", icon: <Music className="w-4 h-4" /> },
+        { name: "Spotify", icon: <Music className="w-4 h-4" /> },
+        { name: "YouTube", icon: <Mic className="w-4 h-4" /> }
+      ];
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => 

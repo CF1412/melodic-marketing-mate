@@ -5,12 +5,15 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { Map, BarChart3, DollarSign, Share2, Users } from "lucide-react";
 import { type ArtistData } from "./ArtistForm";
 import { AnimatedText } from "./AnimatedText";
+import { type OpenAIResponse } from "@/utils/openaiService";
 
 interface InsightsSectionProps {
   artistData: ArtistData | null;
+  generatedContent: OpenAIResponse | null;
+  isGenerating: boolean;
 }
 
-export function InsightsSection({ artistData }: InsightsSectionProps) {
+export function InsightsSection({ artistData, generatedContent, isGenerating }: InsightsSectionProps) {
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState({
     topLocations: [] as string[],
@@ -20,18 +23,30 @@ export function InsightsSection({ artistData }: InsightsSectionProps) {
   });
 
   useEffect(() => {
-    if (artistData) {
+    // Set loading state based on isGenerating
+    setLoading(isGenerating);
+    
+    // If we have generated content and not generating anymore, update the state
+    if (generatedContent && !isGenerating) {
+      setInsights({
+        topLocations: generatedContent.insights.topLocations,
+        platforms: generatedContent.insights.platforms,
+        playlists: generatedContent.insights.playlists,
+        influencers: generatedContent.insights.influencers
+      });
+    } 
+    // If we don't have generated content yet, use fallback after a timeout
+    else if (artistData && !generatedContent && !isGenerating) {
       // Simulate API loading
-      setLoading(true);
       const timer = setTimeout(() => {
         setLoading(false);
-        generateInsights();
+        generateFallbackInsights();
       }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [artistData]);
+  }, [artistData, generatedContent, isGenerating]);
 
-  const generateInsights = () => {
+  const generateFallbackInsights = () => {
     if (!artistData) return;
     
     // Generate insights based on genre and audience

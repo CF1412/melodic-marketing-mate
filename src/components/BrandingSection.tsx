@@ -7,12 +7,15 @@ import { StyleControls } from "./branding/StyleControls";
 import { LogoPreview } from "./branding/LogoPreview";
 import { BrandIdentityGuidelines } from "./branding/BrandIdentityGuidelines";
 import { SocialMediaPreviews } from "./branding/SocialMediaPreviews";
+import { type OpenAIResponse } from "@/utils/openaiService";
 
 interface BrandingSectionProps {
   artistData: ArtistData | null;
+  generatedContent: OpenAIResponse | null;
+  isGenerating: boolean;
 }
 
-export function BrandingSection({ artistData }: BrandingSectionProps) {
+export function BrandingSection({ artistData, generatedContent, isGenerating }: BrandingSectionProps) {
   const [loading, setLoading] = useState(true);
   const [logoGenerated, setLogoGenerated] = useState(false);
   const [colorScheme, setColorScheme] = useState("modern");
@@ -20,8 +23,16 @@ export function BrandingSection({ artistData }: BrandingSectionProps) {
   const [brandIdentity, setBrandIdentity] = useState<string[]>([]);
 
   useEffect(() => {
-    if (artistData) {
-      setLoading(true);
+    // Set loading state based on isGenerating
+    setLoading(isGenerating);
+    
+    // If we have generated content and not generating anymore, update the state
+    if (generatedContent && !isGenerating) {
+      setLogoGenerated(true);
+      setBrandIdentity(generatedContent.branding.brandIdentity);
+    } 
+    // If we don't have generated content yet, use fallback after a timeout
+    else if (artistData && !generatedContent && !isGenerating) {
       const timer = setTimeout(() => {
         setLoading(false);
         setLogoGenerated(true);
@@ -34,7 +45,7 @@ export function BrandingSection({ artistData }: BrandingSectionProps) {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [artistData]);
+  }, [artistData, generatedContent, isGenerating]);
 
   if (!artistData) return null;
 
@@ -60,6 +71,7 @@ export function BrandingSection({ artistData }: BrandingSectionProps) {
             loading={loading}
             logoGenerated={logoGenerated}
             colorScheme={colorScheme}
+            logoDescription={generatedContent?.branding.logoDescription}
           />
         </AnimatedCard>
         
@@ -76,6 +88,7 @@ export function BrandingSection({ artistData }: BrandingSectionProps) {
             artistData={artistData}
             loading={loading}
             colorScheme={colorScheme}
+            socialPosts={generatedContent?.socialMedia.posts}
           />
         </AnimatedCard>
       </div>
