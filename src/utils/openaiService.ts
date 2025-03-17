@@ -72,15 +72,18 @@ Respond in JSON format with no additional explanations. Include the following se
 };
 
 // Main function to generate all content using OpenAI API
-export const generateMarketingContent = async (artistData: ArtistData): Promise<OpenAIResponse> => {
+export const generateMarketingContent = async (artistData: ArtistData, apiKey: string = ""): Promise<OpenAIResponse> => {
   try {
+    // If no API key is provided, use fallback content
+    if (!apiKey) {
+      throw new Error("No API key provided");
+    }
+
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // In a production app, you would use environment variables or secure storage
-        // This is just for demonstration purposes
-        "Authorization": `Bearer YOUR_OPENAI_API_KEY_HERE` 
+        "Authorization": `Bearer ${apiKey}`
       },
       body: JSON.stringify({
         model: "gpt-4o", // Using GPT-4o as specified

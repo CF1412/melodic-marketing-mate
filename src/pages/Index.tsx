@@ -9,21 +9,34 @@ import { EngagementSection } from "@/components/EngagementSection";
 import { ChevronDown } from "lucide-react";
 import { generateMarketingContent, type OpenAIResponse } from "@/utils/openaiService";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 
 const Index = () => {
   const { toast } = useToast();
   const [artistData, setArtistData] = useState<ArtistData | null>(null);
   const [generatedContent, setGeneratedContent] = useState<OpenAIResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [apiKey, setApiKey] = useState<string>(() => {
+    return localStorage.getItem("openai_api_key") || "";
+  });
   const brandingSectionRef = useRef<HTMLDivElement>(null);
+
+  const apiForm = useForm({
+    defaultValues: {
+      apiKey: apiKey,
+    }
+  });
   
   const handleSubmit = async (data: ArtistData) => {
     setArtistData(data);
     setIsGenerating(true);
     
     try {
-      // Generate content using OpenAI
-      const content = await generateMarketingContent(data);
+      // Generate content using OpenAI with the stored API key
+      const content = await generateMarketingContent(data, apiKey);
       setGeneratedContent(content);
       
       toast({
@@ -45,6 +58,15 @@ const Index = () => {
         brandingSectionRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
+  };
+
+  const handleApiKeySave = (values: { apiKey: string }) => {
+    localStorage.setItem("openai_api_key", values.apiKey);
+    setApiKey(values.apiKey);
+    toast({
+      title: "API key saved",
+      description: "Your OpenAI API key has been saved to local storage."
+    });
   };
 
   return (
@@ -119,6 +141,39 @@ const Index = () => {
           </section>
         </div>
       )}
+      
+      {/* API Key Section */}
+      <section className="py-12 px-4 md:px-8 border-t">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-md mx-auto bg-card p-6 rounded-lg shadow-sm border">
+            <h2 className="text-xl font-semibold mb-4">OpenAI API Settings</h2>
+            <Form {...apiForm}>
+              <form onSubmit={apiForm.handleSubmit(handleApiKeySave)} className="space-y-4">
+                <FormField
+                  control={apiForm.control}
+                  name="apiKey"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>OpenAI API Key</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="sk-..." 
+                          type="password" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Your API key will be stored in your browser's local storage.
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Save API Key</Button>
+              </form>
+            </Form>
+          </div>
+        </div>
+      </section>
       
       {/* Footer */}
       <footer className="py-12 px-4 md:px-8 border-t">
