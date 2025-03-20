@@ -14,14 +14,15 @@ interface LogoPreviewProps {
 }
 
 export function LogoPreview({ artistData, loading, logoGenerated, colorScheme, logoDescription }: LogoPreviewProps) {
-  const [profileImage, setProfileImage] = useState("/lovable-uploads/a95261aa-0b6f-4962-bcc3-baee68944ad3.png");
+  const [profileImage, setProfileImage] = useState("/lovable-uploads/7d12bed8-5ae3-4e61-8d43-eb8eebe28f14.png");
   
   const cycleProfileImage = () => {
-    // Cycle between profile images
+    // Cycle between the new band images
     const images = [
-      "/lovable-uploads/a95261aa-0b6f-4962-bcc3-baee68944ad3.png",
-      "/lovable-uploads/02278538-5ecd-4564-8ee4-3547c9ed2c61.png",
-      "/lovable-uploads/98496188-3753-4b1a-8cf0-24ef2f2d9628.png"
+      "/lovable-uploads/7d12bed8-5ae3-4e61-8d43-eb8eebe28f14.png",
+      "/lovable-uploads/15161f6c-9311-4563-8128-be120c94b7ef.png",
+      "/lovable-uploads/e8a58c78-84c4-4b73-bcfa-5309d221e50a.png",
+      "/lovable-uploads/0ceb4efb-8dc9-4310-961c-213c6e59c552.png"
     ];
     
     const currentIndex = images.indexOf(profileImage);
@@ -90,7 +91,7 @@ export function LogoPreview({ artistData, loading, logoGenerated, colorScheme, l
       
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          {logoGenerated ? logoDescription || "Logo generated based on your profile" : "Generating logo..."}
+          {logoGenerated ? logoDescription || "Logo generated based on your dual frontmen band profile" : "Generating logo..."}
         </div>
         
         <div className="flex gap-2">

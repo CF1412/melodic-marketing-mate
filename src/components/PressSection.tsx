@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { AnimatedCard } from "./AnimatedCard";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -43,11 +42,11 @@ export function PressSection({ artistData, generatedContent, isGenerating }: Pre
   const generateFallbackContent = () => {
     if (!artistData) return;
     
-    // Generate press release
-    setPressRelease(`FOR IMMEDIATE RELEASE\n\n${artistData.name} Announces New ${artistData.genre} Project\n\nBringing fresh energy to the ${artistData.genre} scene, ${artistData.name} is excited to announce their upcoming release that promises to captivate ${artistData.targetAudience} with its innovative sound and authentic expression.\n\nBuilding on ${artistData.socialPresence ? `their existing presence of ${artistData.socialPresence}` : "their growing reputation"}, this release marks a significant evolution in their artistic journey.\n\nStay tuned for more updates as ${artistData.name} continues to push boundaries in the music industry.`);
+    // Generate press release for a band with two male lead singers
+    setPressRelease(`FOR IMMEDIATE RELEASE\n\n${artistData.name}, Powerhouse Duo, Announces New ${artistData.genre} Project\n\nBringing fresh energy to the ${artistData.genre} scene, the two frontmen of ${artistData.name} are excited to announce their upcoming release that promises to captivate ${artistData.targetAudience} with their powerful vocal harmonies and authentic expression.\n\nBuilding on ${artistData.socialPresence ? `their existing presence of ${artistData.socialPresence}` : "their growing reputation"}, this release marks a significant evolution in both singers' artistic journey as a duo.\n\nStay tuned for more updates as these two vocalists continue to push boundaries in the music industry.`);
     
-    // Generate artist bio
-    setArtistBio(`${artistData.name} is an emerging force in the ${artistData.genre} landscape, creating music that resonates deeply with ${artistData.targetAudience}.\n\nWith a distinctive sound that blends traditional elements of ${artistData.genre} with innovative production techniques, ${artistData.name} has cultivated a unique voice in today's music scene.\n\n${artistData.socialPresence ? `Already building momentum with ${artistData.socialPresence}, t` : "T"}heir artistic vision aims to create authentic connections through sound, creating an immersive experience for listeners that transcends conventional genre boundaries.`);
+    // Generate artist bio for a band with two male lead singers
+    setArtistBio(`${artistData.name} features two dynamic lead singers creating ${artistData.genre} music that resonates deeply with ${artistData.targetAudience}.\n\nWith complementary vocal styles that blend traditional elements of ${artistData.genre} with innovative production techniques, these two frontmen have cultivated a unique sound in today's music scene.\n\n${artistData.socialPresence ? `Already building momentum with ${artistData.socialPresence}, t` : "T"}he duo's artistic vision aims to create authentic connections through their harmonized approach, creating an immersive experience for listeners that showcases the power of their combined talent.`);
   };
 
   const handleCopy = (text: string, type: "press release" | "artist bio") => {
@@ -92,7 +91,7 @@ export function PressSection({ artistData, generatedContent, isGenerating }: Pre
             
             <div className="flex justify-between items-center mt-auto">
               <div className="text-sm text-muted-foreground">
-                {!loading ? "Customized press release template" : "Generating press release..."}
+                {!loading ? "Customized press release for your duo" : "Generating press release..."}
               </div>
               
               <div className="flex gap-2">
@@ -141,7 +140,7 @@ export function PressSection({ artistData, generatedContent, isGenerating }: Pre
             
             <div className="flex justify-between items-center mt-auto">
               <div className="text-sm text-muted-foreground">
-                {!loading ? "Audience-focused artist biography" : "Analyzing artist profile..."}
+                {!loading ? "Audience-focused dual vocalist biography" : "Analyzing artist profile..."}
               </div>
               
               <div className="flex gap-2">

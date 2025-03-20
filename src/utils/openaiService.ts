@@ -32,11 +32,11 @@ interface OpenAIResponse {
 
 // Function to generate a system prompt based on artist data
 const generateSystemPrompt = (artistData: ArtistData): string => {
-  return `You are an expert music marketing consultant. Create marketing content for an artist with the following details:
+  return `You are an expert music marketing consultant. Create marketing content for a band with two male lead singers with the following details:
 - Name: ${artistData.name}
 - Genre: ${artistData.genre}
 - Target Audience: ${artistData.targetAudience}
-- Current Social Presence: ${artistData.socialPresence || "New artist with minimal presence"}
+- Current Social Presence: ${artistData.socialPresence || "New band with minimal presence"}
 
 Respond in JSON format with no additional explanations. Include the following sections exactly:
 {
@@ -47,14 +47,14 @@ Respond in JSON format with no additional explanations. Include the following se
   },
   "socialMedia": {
     "posts": [
-      {"type": "announcement", "caption": "Full caption text", "platform": "Instagram"},
-      {"type": "behindTheScenes", "caption": "Full caption text", "platform": "TikTok"},
-      {"type": "engagement", "caption": "Full caption text", "platform": "Instagram"}
+      {"type": "announcement", "caption": "Full caption text featuring both vocalists", "platform": "Instagram"},
+      {"type": "behindTheScenes", "caption": "Full caption text about the duo", "platform": "TikTok"},
+      {"type": "engagement", "caption": "Full caption text that mentions both singers", "platform": "Instagram"}
     ]
   },
   "press": {
-    "pressRelease": "Complete press release text",
-    "artistBio": "Complete artist biography"
+    "pressRelease": "Complete press release text referring to them as a duo with two frontmen",
+    "artistBio": "Complete artist biography highlighting both lead singers"
   },
   "insights": {
     "topLocations": ["5 location names"],
@@ -120,41 +120,41 @@ export const generateMarketingContent = async (artistData: ArtistData, apiKey: s
   }
 };
 
-// Fallback content if API fails
+// Fallback content if API fails - updated for a band with two male lead singers
 const getFallbackContent = (artistData: ArtistData): OpenAIResponse => {
   return {
     branding: {
-      logoDescription: `${artistData.name} logo with elements that reflect ${artistData.genre} music.`,
+      logoDescription: `${artistData.name} logo reflecting the dual-frontman dynamic of this ${artistData.genre} band.`,
       brandIdentity: [
-        `Clean, minimalist typography with subtle ${artistData.genre} visual elements`,
-        `Color palette: Deep blues and vibrant accents reflecting ${artistData.genre} energy`,
-        `Visual motifs that appeal to ${artistData.targetAudience}`,
-        `Modern, professional aesthetic with artistic flair`
+        `Bold typography that emphasizes the duo's visual presence in ${artistData.genre}`,
+        `Color palette: Deep blues and vibrant accents capturing the energy of both vocalists`,
+        `Visual motifs that highlight the band's dual-vocal approach for ${artistData.targetAudience}`,
+        `Modern, professional aesthetic that showcases both frontmen equally`
       ],
-      visualStyle: `Modern and clean visual identity that resonates with ${artistData.targetAudience}.`
+      visualStyle: `Striking visual identity that emphasizes the two lead singers while resonating with ${artistData.targetAudience}.`
     },
     socialMedia: {
       posts: [
         {
           type: "announcement",
-          caption: `New single dropping this Friday! #${artistData.genre.replace(/\s+/g, '')}`,
+          caption: `New single dropping this Friday! Both vocalists have poured their hearts into this one. #${artistData.genre.replace(/\s+/g, '')}`,
           platform: "Instagram"
         },
         {
           type: "behindTheScenes",
-          caption: `Spinning some vinyl inspiration for the upcoming album #${artistData.name.replace(/\s+/g, '')}`,
+          caption: `Studio session with the guys recording vocal harmonies for the upcoming album. #${artistData.name.replace(/\s+/g, '')}`,
           platform: "TikTok"
         },
         {
           type: "engagement",
-          caption: `What song should we cover next? Drop your suggestions below! #${artistData.genre.replace(/\s+/g, '')}`,
+          caption: `Which of our vocalists' styles do you prefer? Comment below! #${artistData.genre.replace(/\s+/g, '')}Duo`,
           platform: "Instagram"
         }
       ]
     },
     press: {
-      pressRelease: `FOR IMMEDIATE RELEASE\n\n${artistData.name} Announces New ${artistData.genre} Project\n\nBringing fresh energy to the ${artistData.genre} scene, ${artistData.name} is excited to announce their upcoming release that promises to captivate ${artistData.targetAudience} with its innovative sound and authentic expression.\n\nBuilding on ${artistData.socialPresence ? `their existing presence of ${artistData.socialPresence}` : "their growing reputation"}, this release marks a significant evolution in their artistic journey.\n\nStay tuned for more updates as ${artistData.name} continues to push boundaries in the music industry.`,
-      artistBio: `${artistData.name} is an emerging force in the ${artistData.genre} landscape, creating music that resonates deeply with ${artistData.targetAudience}.\n\nWith a distinctive sound that blends traditional elements of ${artistData.genre} with innovative production techniques, ${artistData.name} has cultivated a unique voice in today's music scene.\n\n${artistData.socialPresence ? `Already building momentum with ${artistData.socialPresence}, t` : "T"}heir artistic vision aims to create authentic connections through sound, creating an immersive experience for listeners that transcends conventional genre boundaries.`
+      pressRelease: `FOR IMMEDIATE RELEASE\n\n${artistData.name}, Powerhouse Duo, Announces New ${artistData.genre} Project\n\nBringing fresh energy to the ${artistData.genre} scene, the two frontmen of ${artistData.name} are excited to announce their upcoming release that promises to captivate ${artistData.targetAudience} with their powerful vocal harmonies and authentic expression.\n\nBuilding on ${artistData.socialPresence ? `their existing presence of ${artistData.socialPresence}` : "their growing reputation"}, this release marks a significant evolution in both singers' artistic journey as a duo.\n\nStay tuned for more updates as these two vocalists continue to push boundaries in the music industry.`,
+      artistBio: `${artistData.name} features two dynamic lead singers creating ${artistData.genre} music that resonates deeply with ${artistData.targetAudience}.\n\nWith complementary vocal styles that blend traditional elements of ${artistData.genre} with innovative production techniques, these two frontmen have cultivated a unique sound in today's music scene.\n\n${artistData.socialPresence ? `Already building momentum with ${artistData.socialPresence}, t` : "T"}he duo's artistic vision aims to create authentic connections through their harmonized approach, creating an immersive experience for listeners that showcases the power of their combined talent.`
     },
     insights: {
       topLocations: [
@@ -173,17 +173,17 @@ const getFallbackContent = (artistData: ArtistData): OpenAIResponse => {
       ],
       playlists: [
         "New Music Friday",
-        "Genre-Specific Playlists",
-        "Mood Playlists",
+        "Vocal Duos Playlist",
+        `Top ${artistData.genre} Duets`,
         "Viral Hits",
         "Independent Artist Spotlights"
       ],
       influencers: [
-        "Genre-specific music bloggers",
-        "Micro-influencers in your target audience demographic",
-        "Music podcasters",
+        `${artistData.genre}-specific music bloggers`,
+        "Vocal coach YouTube channels",
+        "Music podcasters featuring band interviews",
         "Local venue promoters",
-        "Playlist curators"
+        "Playlist curators focusing on vocal harmonies"
       ]
     }
   };
