@@ -4,6 +4,7 @@ import { marketingPrompts } from "@/config/marketingPrompts";
 // Define types for OpenAI responses
 interface OpenAIResponse {
   branding: {
+    creativeBrief?: CreativeBriefOutput;
     logoDescription: string;
     brandIdentity: string[];
     visualStyle: string;
@@ -179,3 +180,41 @@ const getFallbackContent = (artistData: ArtistData): OpenAIResponse => {
 
 // Export the OpenAIResponse type for use in components
 export type { OpenAIResponse };
+
+// Function to generate a creative brief
+export const generateCreativeBrief = async (
+  artistData: ArtistData,
+  apiKey: string
+): Promise<CreativeBriefOutput> => {
+  try {
+    const config = marketingPrompts.assetCreativeBrief;
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: generateSystemPrompt(artistData, 'assetCreativeBrief')
+          }
+        ],
+        temperature: config.temperature,
+        max_tokens: config.maxTokens
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    return JSON.parse(data.choices[0].message.content) as CreativeBriefOutput;
+  } catch (error) {
+    console.error("Error generating creative brief:", error);
+    throw error;
+  }
+};

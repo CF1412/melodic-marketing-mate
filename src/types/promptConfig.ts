@@ -1,4 +1,3 @@
-
 export interface ExamplePair {
   input: {
     name: string;
@@ -7,6 +6,14 @@ export interface ExamplePair {
     socialPresence?: string;
   };
   output: string;
+}
+
+export interface CreativeBriefOutput {
+  visualStyle: string;
+  typography: string;
+  colorPalette: string;
+  motifs: string;
+  summary: string;
 }
 
 export interface PromptConfig {

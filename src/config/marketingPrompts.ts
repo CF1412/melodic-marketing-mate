@@ -1,4 +1,3 @@
-
 import { MarketingPromptConfigs } from '../types/promptConfig';
 
 export const marketingPrompts: MarketingPromptConfigs = {
@@ -137,6 +136,32 @@ Brand Voice:
 - Tone: Nostalgic yet futuristic
 - Keywords: Retro-future, cyberpunk, neon nights
 - Content themes: 80s revival, digital wilderness, synthwave culture`
+      }
+    ]
+  },
+  assetCreativeBrief: {
+    systemPrompt: `You are an expert creative director specializing in music artist branding.
+Create concise, inspiring creative direction that will guide visual asset generation.
+Focus on translating musical genre and artist personality into concrete visual elements.
+Provide specific guidance on typography, color, and visual motifs that align with the artist's identity.`,
+    temperature: 0.8,
+    maxTokens: 600,
+    examples: [
+      {
+        input: {
+          name: "Crystal Surge",
+          genre: "Electronic Pop",
+          targetAudience: "Gen-Z ravers and electronic music enthusiasts",
+        },
+        output: `Creative Direction Brief:
+
+Visual Style: Sleek, futuristic minimalism with liquid chrome effects and ethereal gradients that capture the electronic essence while maintaining a premium feel.
+
+Typography: Bold, geometric sans-serif for headlines with clean, razor-thin secondary fonts. Custom glitch effects on key letters create dynamic energy.
+
+Colors & Textures: Primary palette of deep space black (#0A0A0F) with electric blue (#00F0FF) and metallic silver (#E0E0E0) accents. Holographic textures and prismatic light refractions add depth.
+
+Key Motifs: Crystalline structures, digital wave forms, and circuit-inspired patterns that morph between organic and digital states. Abstract representations of sound waves create visual rhythm.`
       }
     ]
   }

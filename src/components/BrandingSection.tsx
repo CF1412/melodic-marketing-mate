@@ -7,7 +7,10 @@ import { StyleControls } from "./branding/StyleControls";
 import { LogoPreview } from "./branding/LogoPreview";
 import { BrandIdentityGuidelines } from "./branding/BrandIdentityGuidelines";
 import { SocialMediaPreviews } from "./branding/SocialMediaPreviews";
-import { type OpenAIResponse } from "@/utils/openaiService";
+import { CreativeBriefEditor } from "./branding/CreativeBriefEditor";
+import { generateCreativeBrief, type OpenAIResponse } from "@/utils/openaiService";
+import { type CreativeBriefOutput } from "@/types/promptConfig";
+import { useToast } from "@/hooks/use-toast";
 
 interface BrandingSectionProps {
   artistData: ArtistData | null;
@@ -16,36 +19,63 @@ interface BrandingSectionProps {
 }
 
 export function BrandingSection({ artistData, generatedContent, isGenerating }: BrandingSectionProps) {
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [logoGenerated, setLogoGenerated] = useState(false);
   const [colorScheme, setColorScheme] = useState("modern");
   const [designStyle, setDesignStyle] = useState("minimal");
   const [brandIdentity, setBrandIdentity] = useState<string[]>([]);
+  const [creativeBrief, setCreativeBrief] = useState<CreativeBriefOutput | null>(null);
+  const [isGeneratingBrief, setIsGeneratingBrief] = useState(false);
 
   useEffect(() => {
-    // Set loading state based on isGenerating
     setLoading(isGenerating);
     
-    // If we have generated content and not generating anymore, update the state
     if (generatedContent && !isGenerating) {
       setLogoGenerated(true);
       setBrandIdentity(generatedContent.branding.brandIdentity);
+      if (generatedContent.branding.creativeBrief) {
+        setCreativeBrief(generatedContent.branding.creativeBrief);
+      }
     } 
-    // If we don't have generated content yet, use fallback after a timeout
-    else if (artistData && !generatedContent && !isGenerating) {
-      const timer = setTimeout(() => {
-        setLoading(false);
-        setLogoGenerated(true);
-        setBrandIdentity([
-          `Clean, minimalist typography with subtle ${artistData.genre} visual elements`,
-          `Color palette: Deep blues and vibrant accents reflecting ${artistData.genre} energy`,
-          `Visual motifs that appeal to ${artistData.targetAudience}`,
-          `Modern, professional aesthetic with artistic flair`
-        ]);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
   }, [artistData, generatedContent, isGenerating]);
+
+  const handleRegenerateBrief = async () => {
+    if (!artistData) return;
+    
+    setIsGeneratingBrief(true);
+    try {
+      const apiKey = localStorage.getItem("openai_api_key");
+      if (!apiKey) {
+        throw new Error("OpenAI API key not found");
+      }
+      
+      const newBrief = await generateCreativeBrief(artistData, apiKey);
+      setCreativeBrief(newBrief);
+      
+      toast({
+        title: "Creative brief regenerated",
+        description: "Your new creative direction is ready",
+      });
+    } catch (error) {
+      console.error("Error regenerating brief:", error);
+      toast({
+        title: "Error regenerating brief",
+        description: "There was an error generating new creative direction",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingBrief(false);
+    }
+  };
+
+  const handleEditBrief = (editedBrief: CreativeBriefOutput) => {
+    setCreativeBrief(editedBrief);
+    toast({
+      title: "Creative brief updated",
+      description: "Your changes have been saved",
+    });
+  };
 
   if (!artistData) return null;
 
@@ -65,6 +95,15 @@ export function BrandingSection({ artistData, generatedContent, isGenerating }: 
       </div>
       
       <div className="grid md:grid-cols-2 gap-6">
+        <AnimatedCard delay={100}>
+          <CreativeBriefEditor
+            brief={creativeBrief}
+            isLoading={isGeneratingBrief}
+            onRegenerate={handleRegenerateBrief}
+            onEdit={handleEditBrief}
+          />
+        </AnimatedCard>
+
         <AnimatedCard delay={200}>
           <LogoPreview
             artistData={artistData}
@@ -72,10 +111,11 @@ export function BrandingSection({ artistData, generatedContent, isGenerating }: 
             logoGenerated={logoGenerated}
             colorScheme={colorScheme}
             logoDescription={generatedContent?.branding.logoDescription}
+            creativeBrief={creativeBrief}
           />
         </AnimatedCard>
         
-        <AnimatedCard delay={400}>
+        <AnimatedCard delay={300}>
           <BrandIdentityGuidelines
             artistData={artistData}
             loading={loading}
@@ -83,12 +123,13 @@ export function BrandingSection({ artistData, generatedContent, isGenerating }: 
           />
         </AnimatedCard>
         
-        <AnimatedCard className="md:col-span-2" delay={600}>
+        <AnimatedCard className="md:col-span-2" delay={400}>
           <SocialMediaPreviews
             artistData={artistData}
             loading={loading}
             colorScheme={colorScheme}
             socialPosts={generatedContent?.socialMedia.posts}
+            creativeBrief={creativeBrief}
           />
         </AnimatedCard>
       </div>
