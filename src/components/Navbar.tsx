@@ -20,7 +20,7 @@ export function Navbar() {
             <Music className="w-5 h-5 text-white" />
           </div>
           <h1 className="text-xl font-semibold">
-            <span className="gradient-text">Core</span> Copilot
+            <span className="gradient-text">Core Collectif</span> Copilot
           </h1>
         </div>
 
