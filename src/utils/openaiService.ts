@@ -1,5 +1,5 @@
-
 import { ArtistData } from "@/components/ArtistForm";
+import { marketingPrompts } from "@/config/marketingPrompts";
 
 // Define types for OpenAI responses
 interface OpenAIResponse {
@@ -30,54 +30,42 @@ interface OpenAIResponse {
   };
 }
 
-// Function to generate a system prompt based on artist data
-const generateSystemPrompt = (artistData: ArtistData): string => {
-  return `You are an expert music marketing consultant. Create marketing content for a band with two male lead singers with the following details:
+// Function to generate a system prompt based on artist data and context
+const generateSystemPrompt = (artistData: ArtistData, context: keyof typeof marketingPrompts = 'brandingConsultant'): string => {
+  const config = marketingPrompts[context];
+  
+  // Start with the base system prompt for the context
+  const basePrompt = config.systemPrompt;
+  
+  // Add artist-specific details
+  const artistContext = `
+Current Artist Details:
 - Name: ${artistData.name}
 - Genre: ${artistData.genre}
 - Target Audience: ${artistData.targetAudience}
 - Current Social Presence: ${artistData.socialPresence || "New band with minimal presence"}
+`;
 
-Respond in JSON format with no additional explanations. Include the following sections exactly:
-{
-  "branding": {
-    "logoDescription": "A description of appropriate branding elements",
-    "brandIdentity": ["4 bullet points about visual elements"],
-    "visualStyle": "A description of visual style appropriate for the genre"
-  },
-  "socialMedia": {
-    "posts": [
-      {"type": "announcement", "caption": "Full caption text featuring both vocalists", "platform": "Instagram"},
-      {"type": "behindTheScenes", "caption": "Full caption text about the duo", "platform": "TikTok"},
-      {"type": "engagement", "caption": "Full caption text that mentions both singers", "platform": "Instagram"}
-    ]
-  },
-  "press": {
-    "pressRelease": "Complete press release text referring to them as a duo with two frontmen",
-    "artistBio": "Complete artist biography highlighting both lead singers"
-  },
-  "insights": {
-    "topLocations": ["5 location names"],
-    "platforms": [
-      {"name": "Platform Name", "score": 85},
-      {"name": "Platform Name", "score": 80},
-      {"name": "Platform Name", "score": 75},
-      {"name": "Platform Name", "score": 70},
-      {"name": "Platform Name", "score": 65}
-    ],
-    "playlists": ["5 playlist names"],
-    "influencers": ["5 influencer categories"]
-  }
-}`;
+  // Add example if available
+  const examplePrompt = config.examples.length > 0 
+    ? `\nExample Output Style:\n${JSON.stringify(config.examples[0].output, null, 2)}`
+    : '';
+
+  return `${basePrompt}\n\n${artistContext}${examplePrompt}\n\nRespond in JSON format with no additional explanations.`;
 };
 
 // Main function to generate all content using OpenAI API
-export const generateMarketingContent = async (artistData: ArtistData, apiKey: string = ""): Promise<OpenAIResponse> => {
+export const generateMarketingContent = async (
+  artistData: ArtistData, 
+  apiKey: string = "",
+  context: keyof typeof marketingPrompts = 'brandingConsultant'
+): Promise<OpenAIResponse> => {
   try {
-    // If no API key is provided, use fallback content
     if (!apiKey) {
       throw new Error("No API key provided");
     }
+
+    const config = marketingPrompts[context];
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -86,15 +74,15 @@ export const generateMarketingContent = async (artistData: ArtistData, apiKey: s
         "Authorization": `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "gpt-4o", // Using GPT-4o as specified
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
-            content: generateSystemPrompt(artistData)
+            content: generateSystemPrompt(artistData, context)
           }
         ],
-        temperature: 0.7,
-        max_tokens: 1500
+        temperature: config.temperature,
+        max_tokens: config.maxTokens
       })
     });
 
