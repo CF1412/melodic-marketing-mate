@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatedCard } from "./AnimatedCard";
@@ -83,18 +84,24 @@ export function ArtistForm({ onSubmit }: ArtistFormProps) {
           return;
         }
 
+        // First, sign up the user
         await signUp(formData.email, formData.password);
         
+        // Wait for the trigger to create the profile and get the session
         setTimeout(async () => {
           const { data: { session } } = await supabase.auth.getSession();
           
           if (session?.user) {
-            const { error: profileError } = await supabase.from('profiles').update({
-              name: formData.name,
-              genre: formData.genre,
-              target_audience: formData.targetAudience,
-              social_presence: formData.socialPresence,
-            }).eq('id', session.user.id);
+            // Update the profile with user details
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .update({
+                name: formData.name,
+                genre: formData.genre,
+                target_audience: formData.targetAudience,
+                social_presence: formData.socialPresence,
+              })
+              .eq('id', session.user.id);
 
             if (profileError) {
               console.error('Error updating profile:', profileError);
