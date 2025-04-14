@@ -1,4 +1,3 @@
-
 import { useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { ArtistForm, type ArtistData } from "@/components/ArtistForm";
@@ -13,9 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-
 const Index = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [artistData, setArtistData] = useState<ArtistData | null>(null);
   const [generatedContent, setGeneratedContent] = useState<OpenAIResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -23,22 +23,18 @@ const Index = () => {
     return localStorage.getItem("openai_api_key") || "";
   });
   const brandingSectionRef = useRef<HTMLDivElement>(null);
-
   const apiForm = useForm({
     defaultValues: {
-      apiKey: apiKey,
+      apiKey: apiKey
     }
   });
-  
   const handleSubmit = async (data: ArtistData) => {
     setArtistData(data);
     setIsGenerating(true);
-    
     try {
       // Generate content using OpenAI with the stored API key
       const content = await generateMarketingContent(data, apiKey);
       setGeneratedContent(content);
-      
       toast({
         title: "Content generated successfully",
         description: "Your AI marketing content is ready!"
@@ -52,15 +48,18 @@ const Index = () => {
       console.error("Content generation error:", error);
     } finally {
       setIsGenerating(false);
-      
+
       // Scroll to the branding section
       setTimeout(() => {
-        brandingSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+        brandingSectionRef.current?.scrollIntoView({
+          behavior: "smooth"
+        });
       }, 100);
     }
   };
-
-  const handleApiKeySave = (values: { apiKey: string }) => {
+  const handleApiKeySave = (values: {
+    apiKey: string;
+  }) => {
     localStorage.setItem("openai_api_key", values.apiKey);
     setApiKey(values.apiKey);
     toast({
@@ -68,9 +67,7 @@ const Index = () => {
       description: "Your OpenAI API key has been saved to local storage."
     });
   };
-
-  return (
-    <div className="min-h-screen w-full">
+  return <div className="min-h-screen w-full">
       <Navbar />
       
       {/* Hero Section */}
@@ -79,7 +76,9 @@ const Index = () => {
           <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-primary/5 to-transparent"></div>
           <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent"></div>
           <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/10 filter blur-3xl animate-float opacity-70"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-64 h-64 rounded-full bg-accent/10 filter blur-3xl animate-float opacity-70" style={{ animationDelay: "1s" }}></div>
+          <div className="absolute bottom-1/3 right-1/4 w-64 h-64 rounded-full bg-accent/10 filter blur-3xl animate-float opacity-70" style={{
+          animationDelay: "1s"
+        }}></div>
         </div>
         
         <div className="max-w-5xl mx-auto text-center relative z-10 py-16">
@@ -87,15 +86,19 @@ const Index = () => {
             AI-Powered Music Marketing
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-fade-in" style={{
+          animationDelay: "0.2s"
+        }}>
             Your AI Marketing Copilot for <span className="gradient-text">Music Success</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            Create stunning promotional materials, strategic insights, and targeted marketing campaigns — all powered by AI that understands music.
-          </p>
+          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto animate-fade-in" style={{
+          animationDelay: "0.3s"
+        }}>Create stunning promotional materials, strategic insights, and targeted marketing campaigns - powered by realtime streaming data.</p>
           
-          <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div className="animate-fade-in" style={{
+          animationDelay: "0.4s"
+        }}>
             <ArtistForm onSubmit={handleSubmit} />
           </div>
           
@@ -106,41 +109,27 @@ const Index = () => {
       </section>
       
       {/* Results Sections */}
-      {artistData && (
-        <div className="py-16 px-4 md:px-8 space-y-24 max-w-6xl mx-auto">
+      {artistData && <div className="py-16 px-4 md:px-8 space-y-24 max-w-6xl mx-auto">
           {/* Branding Section */}
           <section ref={brandingSectionRef}>
-            <BrandingSection 
-              artistData={artistData}
-              generatedContent={generatedContent}
-              isGenerating={isGenerating}
-            />
+            <BrandingSection artistData={artistData} generatedContent={generatedContent} isGenerating={isGenerating} />
           </section>
           
           {/* Press Section */}
           <section>
-            <PressSection 
-              artistData={artistData}
-              generatedContent={generatedContent}
-              isGenerating={isGenerating}
-            />
+            <PressSection artistData={artistData} generatedContent={generatedContent} isGenerating={isGenerating} />
           </section>
           
           {/* Insights Section */}
           <section>
-            <InsightsSection 
-              artistData={artistData}
-              generatedContent={generatedContent}
-              isGenerating={isGenerating}
-            />
+            <InsightsSection artistData={artistData} generatedContent={generatedContent} isGenerating={isGenerating} />
           </section>
           
           {/* Engagement Section */}
           <section>
             <EngagementSection artistData={artistData} />
           </section>
-        </div>
-      )}
+        </div>}
       
       {/* API Key Section */}
       <section className="py-12 px-4 md:px-8 border-t">
@@ -149,25 +138,17 @@ const Index = () => {
             <h2 className="text-xl font-semibold mb-4">OpenAI API Settings</h2>
             <Form {...apiForm}>
               <form onSubmit={apiForm.handleSubmit(handleApiKeySave)} className="space-y-4">
-                <FormField
-                  control={apiForm.control}
-                  name="apiKey"
-                  render={({ field }) => (
-                    <FormItem>
+                <FormField control={apiForm.control} name="apiKey" render={({
+                field
+              }) => <FormItem>
                       <FormLabel>OpenAI API Key</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="sk-..." 
-                          type="password" 
-                          {...field} 
-                        />
+                        <Input placeholder="sk-..." type="password" {...field} />
                       </FormControl>
                       <FormDescription>
                         Your API key will be stored in your browser's local storage.
                       </FormDescription>
-                    </FormItem>
-                  )}
-                />
+                    </FormItem>} />
                 <Button type="submit">Save API Key</Button>
               </form>
             </Form>
@@ -199,22 +180,12 @@ const Index = () => {
             
             <div className="flex items-center gap-4">
               <a href="#" className="p-2 rounded-full hover:bg-muted transition-colors">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
+                
               </a>
               <a href="#" className="p-2 rounded-full hover:bg-muted transition-colors">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
+                
               </a>
-              <a href="#" className="p-2 rounded-full hover:bg-muted transition-colors">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
-                </svg>
-              </a>
+              
             </div>
           </div>
           
@@ -223,8 +194,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
