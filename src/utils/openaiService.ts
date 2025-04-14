@@ -1,4 +1,3 @@
-
 import { ArtistData } from "@/components/ArtistForm";
 import { marketingPrompts } from "@/config/marketingPrompts";
 import { CreativeBriefOutput } from "@/types/promptConfig";
@@ -181,7 +180,10 @@ const getFallbackContent = (artistData: ArtistData): OpenAIResponse => {
 };
 
 // Export the OpenAIResponse type for use in components
-export type { OpenAIResponse };
+export type { 
+  OpenAIResponse,
+  CreativeBriefOutput 
+};
 
 // Function to generate a creative brief
 export const generateCreativeBrief = async (
@@ -220,6 +222,3 @@ export const generateCreativeBrief = async (
     throw error;
   }
 };
-
-// Export the OpenAIResponse type for use in components
-export type { OpenAIResponse };
