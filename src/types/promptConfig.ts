@@ -9,14 +9,6 @@ export interface ExamplePair {
   output: string;
 }
 
-export interface CreativeBriefOutput {
-  visualStyle: string;
-  typography: string;
-  colorPalette: string;
-  motifs: string;
-  summary?: string;
-}
-
 export interface PromptConfig {
   systemPrompt: string;
   temperature: number;
@@ -30,5 +22,4 @@ export interface MarketingPromptConfigs {
   emailBlastBuilder: PromptConfig;
   pressReleaseWriter: PromptConfig;
   brandingConsultant: PromptConfig;
-  assetCreativeBrief: PromptConfig;
 }

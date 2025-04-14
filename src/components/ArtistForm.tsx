@@ -80,51 +80,33 @@ export function ArtistForm({ onSubmit }: ArtistFormProps) {
             description: "Please fill in all required fields",
             variant: "destructive"
           });
-          setLoading(false);
           return;
         }
 
-        // First, sign up the user
         await signUp(formData.email, formData.password);
         
-        // Wait for the trigger to create the profile and get the session
-        setTimeout(async () => {
-          const { data: { session } } = await supabase.auth.getSession();
-          
-          if (session?.user) {
-            // Update the profile with user details
-            const { error: profileError } = await supabase
-              .from('profiles')
-              .update({
-                name: formData.name,
-                genre: formData.genre,
-                target_audience: formData.targetAudience,
-                social_presence: formData.socialPresence,
-              })
-              .eq('id', session.user.id);
+        // Store profile data
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: user?.id,
+          name: formData.name,
+          genre: formData.genre,
+          target_audience: formData.targetAudience,
+          social_presence: formData.socialPresence,
+        });
 
-            if (profileError) {
-              console.error('Error updating profile:', profileError);
-              toast({
-                title: "Profile update error",
-                description: profileError.message,
-                variant: "destructive"
-              });
-            } else {
-              onSubmit({
-                name: formData.name,
-                genre: formData.genre,
-                targetAudience: formData.targetAudience,
-                socialPresence: formData.socialPresence
-              });
+        if (profileError) throw profileError;
 
-              toast({
-                title: "Profile created",
-                description: "Your artist profile has been created successfully"
-              });
-            }
-          }
-        }, 1000);
+        onSubmit({
+          name: formData.name,
+          genre: formData.genre,
+          targetAudience: formData.targetAudience,
+          socialPresence: formData.socialPresence
+        });
+
+        toast({
+          title: "Profile created",
+          description: "Your artist profile has been created successfully"
+        });
       }
     } catch (error: any) {
       toast({

@@ -4,7 +4,6 @@ import { LoadingSpinner } from "../LoadingSpinner";
 import { Download, RefreshCw, Share2, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useState } from "react";
-import { type CreativeBriefOutput } from "@/types/promptConfig";
 
 interface LogoPreviewProps {
   artistData: ArtistData;
@@ -12,10 +11,9 @@ interface LogoPreviewProps {
   logoGenerated: boolean;
   colorScheme: string;
   logoDescription?: string;
-  creativeBrief?: CreativeBriefOutput | null;
 }
 
-export function LogoPreview({ artistData, loading, logoGenerated, colorScheme, logoDescription, creativeBrief }: LogoPreviewProps) {
+export function LogoPreview({ artistData, loading, logoGenerated, colorScheme, logoDescription }: LogoPreviewProps) {
   const [profileImage, setProfileImage] = useState("/lovable-uploads/7d12bed8-5ae3-4e61-8d43-eb8eebe28f14.png");
   
   const cycleProfileImage = () => {
