@@ -1,8 +1,10 @@
+
 import { type ArtistData } from "../ArtistForm";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { RefreshCw, Info, ChevronLeft, ChevronRight, Instagram, Music, Mic } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useState } from "react";
+import { type CreativeBriefOutput } from "@/types/promptConfig";
 
 interface SocialMediaPost {
   type: string;
@@ -15,9 +17,10 @@ interface SocialMediaPreviewsProps {
   loading: boolean;
   colorScheme: string;
   socialPosts?: SocialMediaPost[];
+  creativeBrief?: CreativeBriefOutput | null;
 }
 
-export function SocialMediaPreviews({ artistData, loading, colorScheme, socialPosts }: SocialMediaPreviewsProps) {
+export function SocialMediaPreviews({ artistData, loading, colorScheme, socialPosts, creativeBrief }: SocialMediaPreviewsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   
   const socialImages = [

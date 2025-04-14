@@ -1,5 +1,7 @@
+
 import { ArtistData } from "@/components/ArtistForm";
 import { marketingPrompts } from "@/config/marketingPrompts";
+import { CreativeBriefOutput } from "@/types/promptConfig";
 
 // Define types for OpenAI responses
 interface OpenAIResponse {
@@ -218,3 +220,6 @@ export const generateCreativeBrief = async (
     throw error;
   }
 };
+
+// Export the OpenAIResponse type for use in components
+export type { OpenAIResponse };

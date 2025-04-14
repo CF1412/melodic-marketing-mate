@@ -1,3 +1,4 @@
+
 export interface ExamplePair {
   input: {
     name: string;
@@ -13,7 +14,7 @@ export interface CreativeBriefOutput {
   typography: string;
   colorPalette: string;
   motifs: string;
-  summary: string;
+  summary?: string;
 }
 
 export interface PromptConfig {
@@ -29,4 +30,5 @@ export interface MarketingPromptConfigs {
   emailBlastBuilder: PromptConfig;
   pressReleaseWriter: PromptConfig;
   brandingConsultant: PromptConfig;
+  assetCreativeBrief: PromptConfig;
 }
